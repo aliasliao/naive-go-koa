@@ -1,10 +1,13 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"time"
-	"utils"
+)
+import (
+	"router"
 )
 
 type Item struct {
@@ -21,8 +24,8 @@ type Dao struct {
 }
 
 func (dao *Dao) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	method, url := r.Method, r.URL.String()
-	fallbackAction := (*dao.routes)["*"]["*"]
+	method, url := router.StringToMethod(r.Method), r.URL.String()
+	fallbackAction := (*dao.routes)[router.ANY]["*"]
 	if dict, exist1 := (*dao.routes)[method]; exist1 {
 		if action, exist2 := dict[url]; exist2 {
 			action(w, r)
@@ -44,7 +47,9 @@ func newDao(route *router.Route) *Dao {
 func main() {
 	route := router.New()
 	route.Get("/api/items", func(w http.ResponseWriter, r *http.Request) {
-
+		if _, e := io.WriteString(w, "/api/items"); e != nil {
+			log.Fatal(e)
+		}
 	}).Post("/api/item", func(w http.ResponseWriter, r *http.Request) {
 
 	}).Patch("/api/item/:id", func(w http.ResponseWriter, r *http.Request) {
