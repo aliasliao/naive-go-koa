@@ -1,55 +1,34 @@
 package main
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
-)
-import (
-	"dao"
-	"router"
+	"koa"
 )
 
 func main() {
-	route := router.New()
-	store := dao.New()
+	koa := Koa.New()
+	router := Router.New()
+	store := daos.New()
 
-	route.Get("/api/items", func(w http.ResponseWriter, r *http.Request) {
-		bytes, e := json.Marshal(store.Items)
-		if e != nil {
-			log.Printf("Error stringify items: %v", e)
-			http.Error(w, "can't stringify items", http.StatusInternalServerError)
-			return
-		}
-		if _, e := io.WriteString(w, string(bytes)); e != nil {
-			log.Printf("Error sending items: %v", e)
-			http.Error(w, "can't sending items", http.StatusInternalServerError)
-			return
-		}
-	}).Post("/api/item", func(w http.ResponseWriter, r *http.Request) {
-		body, e := ioutil.ReadAll(r.Body)
-		if e != nil {
-			log.Printf("Error reading body: %v", e)
-			http.Error(w, "can't read body", http.StatusBadRequest)
-			return
-		}
-		var newItem dao.Item
-		if e := json.Unmarshal(body, &newItem); e != nil {
-			log.Printf("Error parsing body to json: %v", e)
-			http.Error(w, "body is invalid item json", http.StatusBadRequest)
-			return
-		}
-		store.Items = append(store.Items, newItem)
-	}).Patch("/api/item/:id", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/api/users/:userId", func(ctx Koa.Ctx) daos.User {
+		userId := ctx.requestParam("userId")
+		user := store.users.findById(userId)
+		return user
+	}).Post("/api/user", func(ctx Koa.Ctx) daos.User {
+		userInfo := ctx.requestBody().(daos.UserInfo)
+		user := daos.NewUser(userInfo)
+		store.users.push(user)
+		return user
+	}).register(
+		[]daos.Method{daos.OPTIONS, daos.GET},
+		"/api/user-groups/:userGroupId/users/:userId/friends",
+		func(ctx Koa.Ctx) []daos.User {
+			userGroupId, userId := ctx.requestParam("userGroupId", "userId")
+			user := store.users.findByUserGroupIdAndUserId(userGroupId, userId)
+			friends := store.users.findByUserIds(user.friendUserIds)
+			return friends
+		},
+	)
 
-	}).Delete("/api/item/:id", func(w http.ResponseWriter, r *http.Request) {
-
-	})
-
-	http.Handle("/", route)
-	if e := http.ListenAndServe(":8080", nil); e != nil {
-		log.Fatal(e)
-	}
+	koa.use(router.routes())
+	koa.listen(":8080")
 }
