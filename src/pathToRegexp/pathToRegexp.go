@@ -28,10 +28,10 @@ func pathToRegexp(path string, options Options) *regexp.Regexp {
 	for _, segment := range segments {
 		re := regexp.MustCompile(":(\\w+)")
 		cuts := re.FindAllStringSubmatchIndex(segment, -1)
-		newSeg := ""
-		if len(cuts) > 0 {
-			newSeg += regexp.QuoteMeta(segment[0:cuts[0][0]])
+		if len(cuts) == 0 {
+			cuts = append(cuts, []int{0, 0})
 		}
+		newSeg := regexp.QuoteMeta(segment[0:cuts[0][0]])
 		for i, mts := range cuts {
 			newSeg += "([^\\/]+?)"
 			if i+1 == len(cuts) {
