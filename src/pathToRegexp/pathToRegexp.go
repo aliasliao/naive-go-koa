@@ -1,6 +1,9 @@
 package pathToRegexp
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 type Options struct {
 	// When true the regexp will be case sensitive. (default: false)
@@ -20,5 +23,35 @@ type Options struct {
 }
 
 func pathToRegexp(path string, options Options) *regexp.Regexp {
+	segments := strings.Split(path, options.delimiter)
+	newSegments := make([]string, 0)
+	for _, segment := range segments {
+		re := regexp.MustCompile(":(\\w+)")
+		cuts := re.FindAllStringSubmatchIndex(segment, -1)
+		newSeg := ""
+		if len(cuts) > 0 {
+			newSeg += regexp.QuoteMeta(segment[0:cuts[0][0]])
+		}
+		for i, mts := range cuts {
+			newSeg += "([^\\/]+?)"
+			if i+1 == len(cuts) {
+				newSeg += regexp.QuoteMeta(segment[mts[1]:])
+			} else {
+				newSeg += regexp.QuoteMeta(segment[mts[1]:cuts[i+1][0]])
+			}
+		}
+		newSegments = append(newSegments, newSeg)
+	}
+	regPath := strings.Join(newSegments, regexp.QuoteMeta(options.delimiter))
+	if !options.strict {
+		regPath += "(:?\\/)?$"
+	} else {
+		regPath += "$"
+	}
 
+	if ret, err := regexp.Compile(regPath); err != nil {
+		panic(err)
+	} else {
+		return ret
+	}
 }
