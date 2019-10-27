@@ -39,4 +39,5 @@ func validatePath(path string) []string {
 func (r Router) Get(path string, controller controller) *Router {
 	segs := validatePath(path)
 	// pathToRegexp
+	return new(Router)
 }

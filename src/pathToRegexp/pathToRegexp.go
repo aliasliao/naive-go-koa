@@ -2,7 +2,6 @@ package pathToRegexp
 
 import (
 	"regexp"
-	"strings"
 )
 
 type Options struct {
@@ -15,43 +14,45 @@ type Options struct {
 	// When true the regexp will match from the beginning of the string. (default: true)
 	start bool
 	// The default delimiter for segments. (default: '/')
-	delimiter string
+	//delimiter string
 	// Optional character, or list of characters, to treat as "end" characters.
-	endsWidth uint8
+	//endsWidth uint8
 	// List of characters to consider delimiters when parsing. (default: undefined, any character)
-	whitelist []uint8
+	//whitelist []uint8
 }
 
-func pathToRegexp(path string, options Options) *regexp.Regexp {
-	segments := strings.Split(path, options.delimiter)
-	newSegments := make([]string, 0)
-	for _, segment := range segments {
-		re := regexp.MustCompile(":(\\w+)")
-		cuts := re.FindAllStringSubmatchIndex(segment, -1)
-		if len(cuts) == 0 {
-			cuts = append(cuts, []int{0, 0})
-		}
-		newSeg := regexp.QuoteMeta(segment[0:cuts[0][0]])
-		for i, mts := range cuts {
-			newSeg += "([^\\/]+?)"
-			if i+1 == len(cuts) {
-				newSeg += regexp.QuoteMeta(segment[mts[1]:])
-			} else {
-				newSeg += regexp.QuoteMeta(segment[mts[1]:cuts[i+1][0]])
-			}
-		}
-		newSegments = append(newSegments, newSeg)
+func replaceAll(str string, re *regexp.Regexp, newSubStr string) string {
+	posPairs := re.FindAllStringIndex(str, -1)
+	start := 0
+	ret := ""
+	for _, posPair := range posPairs {
+		ret += str[start:posPair[0]] + newSubStr
+		start = posPair[1]
 	}
-	regPath := strings.Join(newSegments, regexp.QuoteMeta(options.delimiter))
-	if !options.strict {
-		regPath += "(:?\\/)?$"
-	} else {
-		regPath += "$"
-	}
+	ret += str[start:]
+	return ret
+}
 
-	if ret, err := regexp.Compile(regPath); err != nil {
-		panic(err)
-	} else {
-		return ret
+func pathToRegexpStr(path string, options *Options) string {
+	reStr := replaceAll(
+		regexp.QuoteMeta(path),
+		regexp.MustCompile(`:\w+`),
+		`([^\/]+?)`)
+	if options.start {
+		reStr = `^` + reStr
 	}
+	if !options.strict {
+		reStr += `\/?`
+	}
+	if options.end {
+		reStr += `$`
+	}
+	if !options.sensitive {
+		reStr = `(?i:` + reStr + `)`
+	}
+	return reStr
+}
+
+func PathToRegexp(path string, options *Options) *regexp.Regexp {
+	return regexp.MustCompile(pathToRegexpStr(path, options))
 }
