@@ -34,6 +34,14 @@ func replaceAll(str string, re *regexp.Regexp, newSubStr string) string {
 }
 
 func pathToRegexpStr(path string, options *Options) string {
+	if options == nil {
+		options = &Options{
+			sensitive: false,
+			strict:    false,
+			end:       true,
+			start:     true,
+		}
+	}
 	reStr := replaceAll(
 		regexp.QuoteMeta(path),
 		regexp.MustCompile(`:\w+`),

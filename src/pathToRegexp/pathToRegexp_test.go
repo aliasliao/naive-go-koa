@@ -6,12 +6,7 @@ import (
 )
 
 func TestPathToRegexp(t *testing.T) {
-	options := &Options{
-		sensitive: false,
-		strict:    false,
-		end:       true,
-		start:     true,
-	}
+
 	t.Run("replaceAll", func(t *testing.T) {
 		newStr := replaceAll("/foo/:bar", regexp.MustCompile(`:\w+`), "placeholder")
 		expectNewStr := "/foo/placeholder"
@@ -25,19 +20,23 @@ func TestPathToRegexp(t *testing.T) {
 			t.Errorf("Expect: %s, got: %s", expectNewStr, newStr)
 		}
 	})
+
 	t.Run("pathToRegexpStr", func(t *testing.T) {
-		reStr := pathToRegexpStr("/foo/:bar", options)
+		reStr := pathToRegexpStr("/foo/:bar", nil)
 		expectReStr := `(?i:^/foo/([^\/]+?)\/?$)`
 		if reStr != expectReStr {
 			t.Errorf("Expect: %s, got: %s", expectReStr, reStr)
 		}
 	})
+
 	t.Run("PathToRegexp", func(t *testing.T) {
-		re := PathToRegexp("/foo/:bar", options)
+		re := PathToRegexp("/foo/:bar", nil)
 		paths := map[string]bool{
-			"/foo/123":     true,
-			"/foo/123/":    true,
-			"/FOO/123":     true,
+			// match cases
+			"/foo/123":  true,
+			"/foo/123/": true,
+			"/FOO/123":  true,
+			// not match cases
 			"":             false,
 			"/foo":         false,
 			"/foo/":        false,
