@@ -33,6 +33,18 @@ func replaceAll(str string, re *regexp.Regexp, newSubStr string) string {
 	return ret
 }
 
+func replaceAllWith(str string, re *regexp.Regexp, genNewSubStr func(string) string) string {
+	posPairs := re.FindAllStringIndex(str, -1)
+	start := 0
+	ret := ""
+	for _, posPair := range posPairs {
+		ret += str[start:posPair[0]] + genNewSubStr(str[posPair[0]+1:posPair[1]])
+		start = posPair[1]
+	}
+	ret += str[start:]
+	return ret
+}
+
 func pathToRegexpStr(path string, options *Options) string {
 	if options == nil {
 		options = &Options{
@@ -42,10 +54,13 @@ func pathToRegexpStr(path string, options *Options) string {
 			start:     true,
 		}
 	}
-	reStr := replaceAll(
+	reStr := replaceAllWith(
 		regexp.QuoteMeta(path),
 		regexp.MustCompile(`:\w+`),
-		`([^\/]+?)`)
+		func(pathVar string) string {
+			return `(?P<` + pathVar + `>[^\/]+?)`
+		},
+	)
 	if options.start {
 		reStr = `^` + reStr
 	}

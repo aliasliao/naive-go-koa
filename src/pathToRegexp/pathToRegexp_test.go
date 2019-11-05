@@ -21,9 +21,24 @@ func TestPathToRegexp(t *testing.T) {
 		}
 	})
 
+	t.Run("replaceAllWith", func(t *testing.T) {
+		converter := func(s string) string { return "[" + s + "]" }
+		newStr := replaceAllWith("/foo/:bar", regexp.MustCompile(`:\w+`), converter)
+		expectNewStr := "/foo/[bar]"
+		if newStr != expectNewStr {
+			t.Errorf("Expect: %s, got: %s", expectNewStr, newStr)
+		}
+
+		newStr = replaceAllWith("/foo/:bar/:baz", regexp.MustCompile(`:\w+`), converter)
+		expectNewStr = "/foo/[bar]/[baz]"
+		if newStr != expectNewStr {
+			t.Errorf("Expect: %s, got: %s", expectNewStr, newStr)
+		}
+	})
+
 	t.Run("pathToRegexpStr", func(t *testing.T) {
 		reStr := pathToRegexpStr("/foo/:bar", nil)
-		expectReStr := `(?i:^/foo/([^\/]+?)\/?$)`
+		expectReStr := `(?i:^/foo/(?P<bar>[^\/]+?)\/?$)`
 		if reStr != expectReStr {
 			t.Errorf("Expect: %s, got: %s", expectReStr, reStr)
 		}
