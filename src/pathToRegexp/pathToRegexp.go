@@ -54,18 +54,17 @@ func pathToRegexpStr(path string, options *Options) string {
 			start:     true,
 		}
 	}
-	reStr := replaceAllWith(
+	reStr := regexp.MustCompile(`:\w+`).ReplaceAllStringFunc(
 		regexp.QuoteMeta(path),
-		regexp.MustCompile(`:\w+`),
 		func(pathVar string) string {
-			return `(?P<` + pathVar + `>[^\/]+?)`
+			return `(?P<` + pathVar[1:] + `>[^/]+?)`
 		},
 	)
 	if options.start {
 		reStr = `^` + reStr
 	}
 	if !options.strict {
-		reStr += `\/?`
+		reStr += `/?`
 	}
 	if options.end {
 		reStr += `$`
