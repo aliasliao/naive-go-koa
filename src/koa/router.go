@@ -1,5 +1,11 @@
 package koa
 
+import (
+	"regexp"
+
+	"pathToRegexp"
+)
+
 type Method int
 
 const (
@@ -11,33 +17,51 @@ const (
 	OPTION
 )
 
-type controller interface{}
+type Ctx interface{}
 
-type node struct {
-	segment    string
-	methods    []Method
-	controller controller
-	children   []*node
+type layerT struct {
+	re      *regexp.Regexp
+	methods *[]Method
+	handler *func(Ctx)
 }
-
 type Router struct {
-	tree *node
+	layers []*layerT
 }
 
 func NewRouter() *Router {
-	dumbNode := node{
-		children: make([]*node, 0),
+	return &Router{
+		layers: make([]*layerT, 0),
 	}
-	return &Router{&dumbNode}
 }
 
-func validatePath(path string) []string {
-
+func updateRouter(r Router, methods []Method, path string, ctr func(Ctx)) *Router {
+	re := pathToRegexp.PathToRegexp(path, nil)
+	layer := &layerT{
+		re:      re,
+		methods: &methods,
+		handler: &ctr,
+	}
+	r.layers = append(r.layers, layer)
+	return &r
 }
-
-// expect to define a new path in router tree
-func (r Router) Get(path string, controller controller) *Router {
-	segs := validatePath(path)
-	// pathToRegexp
-	return new(Router)
+func (r Router) Get(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{GET}, path, ctr)
+}
+func (r Router) Post(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{POST}, path, ctr)
+}
+func (r Router) Put(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{PUT}, path, ctr)
+}
+func (r Router) Patch(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{PATCH}, path, ctr)
+}
+func (r Router) Delete(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{DELETE}, path, ctr)
+}
+func (r Router) Option(path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, []Method{OPTION}, path, ctr)
+}
+func (r Router) Register(methods []Method, path string, ctr func(Ctx)) *Router {
+	return updateRouter(r, methods, path, ctr)
 }

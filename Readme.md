@@ -15,26 +15,26 @@ import (
 )
 
 func main() {
-    router := Koa.Router.New()
+    router := Koa.NewRouter()
     store := Store.New()
 
-    router.Get("/api/users/:userId", func(ctx Koa.Ctx) Store.User {
+    router.Get("/api/users/:userId", func(ctx Koa.Ctx) {
         userId := ctx.requestParam("userId")
         user := store.users.findById(userId)
-        return user
-    }).Post("/api/user", func(ctx Koa.Ctx) Store.User {
+        ctx.send(user)
+    }).Post("/api/user", func(ctx Koa.Ctx) {
         userInfo := ctx.requestBody().(Store.UserInfo)
         user := Store.User.New(userInfo)
         store.users.push(user)
-        return user
-    }).register(
+        ctx.send(user)
+    }).Register(
         []Koa.Method{Koa.OPTIONS, Koa.GET},
         "/api/user-groups/:userGroupId/users/:userId/friends",
-        func(ctx Koa.Ctx) []Store.User {
+        func(ctx Koa.Ctx) {
             userGroupId, userId := ctx.requestParam("userGroupId", "userId")
             user := store.users.findByUserGroupIdAndUserId(userGroupId, userId)
             friends := store.users.findByUserIds(user.friendUserIds)
-            return friends
+            ctx.send(friends)
         },
     )
 
