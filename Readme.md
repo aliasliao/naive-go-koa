@@ -10,36 +10,41 @@ A koa like go server
 package main
 
 import (
-    Koa    "koa"
-    Store  "store"
+    Koa    "kao"
 )
+
+type User struct {
+    id int
+    userGroupId int
+    Name string
+    Age int
+    Description string
+}
 
 func main() {
     router := Koa.NewRouter()
-    store := Store.New()
 
     router.Get("/api/users/:userId", func(ctx Koa.Ctx) {
-        userId := ctx.requestParam("userId")
-        user := store.users.findById(userId)
-        ctx.send(user)
+        userId := ctx.getParam("userId")
+        ctx.send(&User{
+            id: userId,
+        })
     }).Post("/api/user", func(ctx Koa.Ctx) {
-        userInfo := ctx.requestBody().(Store.UserInfo)
-        user := Store.User.New(userInfo)
-        store.users.push(user)
+        user := ctx.getBody().(User)
         ctx.send(user)
-    }).Register(
-        []Koa.Method{Koa.OPTIONS, Koa.GET},
+    }).Get(
         "/api/user-groups/:userGroupId/users/:userId/friends",
         func(ctx Koa.Ctx) {
-            userGroupId, userId := ctx.requestParam("userGroupId", "userId")
-            user := store.users.findByUserGroupIdAndUserId(userGroupId, userId)
-            friends := store.users.findByUserIds(user.friendUserIds)
-            ctx.send(friends)
+            userGroupId, userId := ctx.getParam("userGroupId", "userId")
+            ctx.send(&User{
+                id: userId,
+                userGroupId: userGroupId,
+}           )
         },
     )
 
     koa := Koa.New()
-    koa.Use(router.Routes())
+    koa.Use(router)
     koa.Listen(":8080")
 }
 ```
