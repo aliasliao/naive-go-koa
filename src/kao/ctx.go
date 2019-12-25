@@ -1,26 +1,34 @@
 package kao
 
 import (
+	"fmt"
 	"net/http"
-	"regexp"
 )
 
 type Ctx struct {
-	res *http.ResponseWriter
-	req *http.Request
-	re  *regexp.Regexp
+	res   *http.ResponseWriter
+	req   *http.Request
+	param *map[string]string
 }
 
-func newCtx(res *http.ResponseWriter, req *http.Request, re *regexp.Regexp) *Ctx {
+func newCtx(res *http.ResponseWriter, req *http.Request, param *map[string]string) *Ctx {
 	return &Ctx{
-		res: res,
-		req: req,
-		re:  re,
+		res:   res,
+		req:   req,
+		param: param,
 	}
 }
 
-func (ctx Ctx) GetParam(key string) string {}
+func (ctx Ctx) GetParam(key string) (string, bool) {
+	v, ok := (*ctx.param)[key]
+	return v, ok
+}
 
-func (ctx Ctx) GetQuery(key string) string {}
+func (ctx Ctx) GetQuery(key string) ([]string, bool) {
+	v, ok := ctx.req.URL.Query()[key]
+	return v, ok
+}
 
-func (ctx Ctx) Send(data interface{}) {}
+func (ctx Ctx) Send(data interface{}) {
+	_, _ = fmt.Fprint(*ctx.res, data)
+}

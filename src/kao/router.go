@@ -31,7 +31,7 @@ func NewRouter() *Router {
 	}
 }
 
-func registerRoute(r Router, method Method, path string, ctr func(*Ctx)) *Router {
+func registerRoute(r *Router, method Method, path string, ctr func(*Ctx)) *Router {
 	re := pathToRegexp.PathToRegexp(path, nil)
 	route := &routeT{
 		re:      re,
@@ -39,20 +39,20 @@ func registerRoute(r Router, method Method, path string, ctr func(*Ctx)) *Router
 		handler: &ctr,
 	}
 	r.routes = append(r.routes, route)
-	return &r
+	return r
 }
-func (r Router) Get(path string, ctr func(*Ctx)) *Router {
+func (r *Router) Get(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, GET, path, ctr)
 }
-func (r Router) Post(path string, ctr func(*Ctx)) *Router {
+func (r *Router) Post(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, POST, path, ctr)
 }
-func (r Router) Put(path string, ctr func(*Ctx)) *Router {
+func (r *Router) Put(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, PUT, path, ctr)
 }
-func (r Router) Patch(path string, ctr func(*Ctx)) *Router {
+func (r *Router) Patch(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, PATCH, path, ctr)
 }
-func (r Router) Delete(path string, ctr func(*Ctx)) *Router {
+func (r *Router) Delete(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, DELETE, path, ctr)
 }
