@@ -1,11 +1,10 @@
 package kao
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type Kao struct {
@@ -23,9 +22,8 @@ func New() *Kao {
 
 func (k Kao) Use(router *Router) *Kao {
 	k.server.Handler = http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		fmt.Printf(
-			"[%v] %s %s\n",
-			time.Now().Format("2006-01-02T15:04:05.999999"),
+		log.Printf(
+			"%s %s\n",
 			req.Method,
 			req.URL.Path,
 		)

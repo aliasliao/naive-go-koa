@@ -29,6 +29,10 @@ func (ctx Ctx) GetQuery(key string) ([]string, bool) {
 	return v, ok
 }
 
-func (ctx Ctx) Send(data interface{}) {
-	_, _ = fmt.Fprint(*ctx.res, data)
+func (ctx Ctx) Send(data ...interface{}) (n int, err error) {
+	return fmt.Fprint(*ctx.res, data...)
+}
+
+func (ctx Ctx) Sendf(format string, data ...interface{}) (n int, err error) {
+	return fmt.Fprintf(*ctx.res, format, data...)
 }
