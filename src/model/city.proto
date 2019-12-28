@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package model;
+
+import "model/user.proto";
+
+option go_package = "model";
+
+message City {
+    int64 id = 1;
+    string name = 2;
+    repeated User users = 4;
+}

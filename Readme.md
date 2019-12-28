@@ -3,8 +3,13 @@ Go Server
 
 A koa like go server
 
+### Generate Proto
+```shell script
+$ cd naive-go-koa
+$ protoc --proto_path=src  --go_out=src src/model/*.proto
+```
 
-## Getting Started
+### Getting Started
 
 ```go
 package main
@@ -48,4 +53,3 @@ func main() {
     koa.Listen(":8080")
 }
 ```
-

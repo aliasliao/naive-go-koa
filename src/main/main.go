@@ -16,6 +16,8 @@ func main() {
 	router := kao.NewRouter()
 	router.Get("/user/:userId", func(ctx *kao.Ctx) {
 		userId, _ := ctx.GetParam("userId")
+		ctx.SetHeader("Content-Type", "application/json;charset=UTF-8")
+		ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
 		ctx.Send(User{
 			id:   userId,
 			name: "jack",
@@ -24,10 +26,9 @@ func main() {
 	})
 	app := kao.New()
 	app.Use(router)
-	cb := func(port *string) {
+	err := app.Listen(80, func(port *string) {
 		log.Println("Server is listening on port", *port)
-	}
-	err := app.Listen(nil, &cb)
+	})
 	if err != nil {
 		log.Fatal(err)
 	}

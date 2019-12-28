@@ -33,6 +33,29 @@ func (ctx Ctx) Send(data ...interface{}) (n int, err error) {
 	return fmt.Fprint(*ctx.res, data...)
 }
 
+func (ctx Ctx) SetHeader(key string, val string) {
+	(*ctx.res).Header().Set(key, val)
+}
+
+func (ctx Ctx) SetHeaders(headers map[string]string) {
+	for key := range headers {
+		ctx.SetHeader(key, headers[key])
+	}
+}
+
+func (ctx Ctx) SetCookie(name string, value string) {
+	http.SetCookie(*ctx.res, &http.Cookie{
+		Name:  name,
+		Value: value,
+	})
+}
+
+func (ctx Ctx) SetCookies(cookies map[string]string) {
+	for name := range cookies {
+		ctx.SetCookie(name, cookies[name])
+	}
+}
+
 func (ctx Ctx) Sendf(format string, data ...interface{}) (n int, err error) {
 	return fmt.Fprintf(*ctx.res, format, data...)
 }
