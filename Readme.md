@@ -6,6 +6,8 @@ A koa like go server
 ### Generate Proto
 ```shell script
 $ cd naive-go-koa
+$ $env:GOPATH = $(pwd)
+$ go get -u github.com/golang/protobuf/protoc-gen-go
 $ protoc --proto_path=src  --go_out=src src/model/*.proto
 ```
 

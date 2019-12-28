@@ -1,4 +1,5 @@
 .idea
 lib
 bin
-src/model/*.proto
+src/model/*.go
+src/github.com
