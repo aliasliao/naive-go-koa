@@ -5,8 +5,15 @@ package model;
 option go_package = "model";
 
 message User {
+    enum Gender {
+        MALE = 0;
+        FEMALE = 1;
+        OTHER = 2;
+    }
+
     int64 id = 1;
     string name = 2;
     int32 age = 3;
     repeated string hobbies = 4;
+    Gender gender = 5;
 }

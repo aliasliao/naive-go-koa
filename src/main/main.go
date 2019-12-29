@@ -3,14 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/golang/protobuf/proto"
 	"kao"
+	"model"
 )
-
-type User struct {
-	id   string
-	name string
-	age  int
-}
 
 func main() {
 	router := kao.NewRouter()
@@ -18,11 +14,12 @@ func main() {
 		userId, _ := ctx.GetParam("userId")
 		ctx.SetHeader("Content-Type", "application/json;charset=UTF-8")
 		ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
-		ctx.Send(User{
-			id:   userId,
-			name: "jack",
-			age:  99,
-		})
+		user := model.User{
+			Name:    userId,
+			Age:     999,
+			Hobbies: []string{"adsfa", "dddd"},
+		}
+		ctx.Send(proto.Marshal(&user))
 	})
 	app := kao.New()
 	app.Use(router)
