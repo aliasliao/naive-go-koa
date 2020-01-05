@@ -13,6 +13,7 @@ type Ctx struct {
 	req   *http.Request
 	param *map[string]string
 	m     *jsonpb.Marshaler
+	u     *jsonpb.Unmarshaler
 }
 
 func newCtx(res *http.ResponseWriter, req *http.Request, param *map[string]string) *Ctx {
@@ -21,6 +22,7 @@ func newCtx(res *http.ResponseWriter, req *http.Request, param *map[string]strin
 		req:   req,
 		param: param,
 		m:     &jsonpb.Marshaler{},
+		u:     &jsonpb.Unmarshaler{},
 	}
 }
 
@@ -35,16 +37,22 @@ func (ctx Ctx) GetQuery(key string) ([]string, bool) {
 }
 
 func (ctx Ctx) Send(data ...interface{}) (n int, err error) {
+	ctx.SetHeader("Content-Type", "text/plain;charset=UTF-8")
 	return fmt.Fprint(*ctx.res, data...)
 }
 
 func (ctx Ctx) Sendf(format string, data ...interface{}) (n int, err error) {
+	ctx.SetHeader("Content-Type", "text/plain;charset=UTF-8")
 	return fmt.Fprintf(*ctx.res, format, data...)
 }
 
-func (ctx Ctx) SendMessage(pb proto.Message) error {
+func (ctx Ctx) Sendm(pb proto.Message) error {
 	ctx.SetHeader("Content-Type", "application/json;charset=UTF-8")
 	return ctx.m.Marshal(*ctx.res, pb)
+}
+
+func (ctx Ctx) Parsem(pb proto.Message) error {
+	return ctx.u.Unmarshal(ctx.req.Body, pb)
 }
 
 func (ctx Ctx) SetHeader(key string, val string) {
