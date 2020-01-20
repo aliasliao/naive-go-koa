@@ -1,5 +1,6 @@
 .idea
 lib
 bin
-src/model/*.go
+pkg
+**/*.pb.go
 src/github.com

@@ -1,6 +1,9 @@
 package kao
 
 import (
+	"io"
+	"log"
+	"net/http"
 	"regexp"
 
 	"pathToRegexp"
@@ -55,4 +58,35 @@ func (r *Router) Patch(path string, ctr func(*Ctx)) *Router {
 }
 func (r *Router) Delete(path string, ctr func(*Ctx)) *Router {
 	return registerRoute(r, DELETE, path, ctr)
+}
+
+func (r Router) Middleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		log.Printf(
+			"%s %s\n",
+			req.Method,
+			req.URL.Path,
+		)
+		method, url := req.Method, req.URL
+		routeHit := false
+		for _, route := range r.routes {
+			if *route.method == Method(method) && route.re.MatchString(url.Path) {
+				keys := route.re.SubexpNames()
+				values := route.re.FindAllStringSubmatch(url.Path, -1)[0]
+				param := map[string]string{}
+				for i, key := range keys {
+					param[key] = values[i]
+				}
+				(*route.handler)(newCtx(&res, req, &param))
+				routeHit = true
+				break
+			}
+		}
+		if !routeHit {
+			_, _ = io.WriteString(res, "Using Default Response Handler~")
+		}
+		if handler != nil {
+			handler.ServeHTTP(res, req)
+		}
+	})
 }
