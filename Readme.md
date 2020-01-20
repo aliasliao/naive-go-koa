@@ -7,6 +7,7 @@ A koa like go server
 ```shell script
 $ cd naive-go-koa
 $ $env:GOPATH = $(pwd)
+$ go install github.com/golang/protobuf
 $ go get -u github.com/golang/protobuf/protoc-gen-go
 $ protoc --proto_path=src  --go_out=src src/model/*.proto
 ```
