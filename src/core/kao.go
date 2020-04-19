@@ -1,4 +1,4 @@
-package kao
+package core
 
 import (
 	"net/http"

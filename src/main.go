@@ -3,13 +3,13 @@ package main
 import (
 	"log"
 
-	"kao"
-	"model"
+	"./core"
+	"./model"
 )
 
 func main() {
-	router := kao.NewRouter()
-	router.Get("/user/:userId", func(ctx *kao.Ctx) {
+	router := core.NewRouter()
+	router.Get("/user/:userId", func(ctx *core.Ctx) {
 		userId, _ := ctx.GetParam("userId")
 		ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
 		ctx.Sendm(&model.User{
@@ -18,7 +18,7 @@ func main() {
 			Hobbies: []string{"adsfa", "dddd"},
 			Gender:  model.User_FEMALE,
 		})
-	}).Post("/user/:userId", func(ctx *kao.Ctx) {
+	}).Post("/user/:userId", func(ctx *core.Ctx) {
 		userId, _ := ctx.GetParam("userId")
 		user := &model.User{
 			Name: userId,
@@ -26,7 +26,7 @@ func main() {
 		ctx.Parsem(user)
 		ctx.Sendm(user)
 	})
-	app := kao.New()
+	app := core.New()
 	app.Use(router)
 	err := app.Listen(80, func(port *string) {
 		log.Println("Server is listening on port", *port)

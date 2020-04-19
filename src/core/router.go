@@ -1,4 +1,4 @@
-package kao
+package core
 
 import (
 	"io"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"pathToRegexp"
+	"../pathToRegexp"
 )
 
 type Method string
