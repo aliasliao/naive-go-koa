@@ -39,14 +39,7 @@ jobs:
 
     - name: Get dependencies
       run:
-        shell: |
-          echo ">>>> GITHUB_WORKSPACE:"
-          echo $GITHUB_WORKSPACE
-          echo ">>>> go path:"
-          echo $GOPATH
-          echo ">>>> pwd:"
-          pwd
-          go get -v -t -d ./...
+        shell: go get -v -t -d ./...
         working-directory: ${{ github.workspace }}/${{ env.APP }}
 
     - name: Build
