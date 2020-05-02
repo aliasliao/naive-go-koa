@@ -1,7 +1,3 @@
 .idea
-lib
-bin
-pkg
-vendor
 **/*.pb.go
-src/github.com
+*.exe

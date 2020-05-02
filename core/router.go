@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"../pathToRegexp"
+	"github.com/aliasliao/naive-go-koa/pathToRegexp"
 )
 
 type Method string

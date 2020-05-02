@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"./core"
-	"./model"
+	"github.com/aliasliao/naive-go-koa/core"
+	"github.com/aliasliao/naive-go-koa/model"
 )
 
 func main() {
