@@ -10,16 +10,11 @@ env:
   GOPATH: ${{ github.workspace }}
   APP: src/github.com/${{ github.repository }}
 
-defaults:
-  run:
-    working-directory: ${{ github.workspace }}/${{ env.APP }}
-
 jobs:
 
   build:
     name: Build
     runs-on: ubuntu-18.04
-    env:
     steps:
 
     - name: Log env
@@ -43,17 +38,23 @@ jobs:
         path: ${{ env.APP }}
 
     - name: Get dependencies
-      run: |
-        echo ">>>> GITHUB_WORKSPACE:"
-        echo $GITHUB_WORKSPACE
-        echo ">>>> go path:"
-        echo $GOPATH
-        echo ">>>> pwd:"
-        pwd
-        go get -v -t -d ./...
+      run:
+        shell: |
+          echo ">>>> GITHUB_WORKSPACE:"
+          echo $GITHUB_WORKSPACE
+          echo ">>>> go path:"
+          echo $GOPATH
+          echo ">>>> pwd:"
+          pwd
+          go get -v -t -d ./...
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
 
     - name: Build
-      run: go build -v .
+      run:
+        shell: go build -v .
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
 
     - name: Test
-      run: go test -v .
+      run:
+        shell: go test -v ./...
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
