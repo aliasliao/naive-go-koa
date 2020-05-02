@@ -1,6 +1,8 @@
 Go Server
 ==========
 
+![Go](https://github.com/aliasliao/naive-go-koa/workflows/Go/badge.svg)
+
 A koa like go server
 
 ### Generate Proto

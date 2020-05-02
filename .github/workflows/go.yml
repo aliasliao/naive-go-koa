@@ -38,16 +38,20 @@ jobs:
         path: ${{ env.APP }}
 
     - name: Get dependencies
-      run:
-        shell: go get -v -t -d ./...
-        working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: |
+        echo ">>>> GITHUB_WORKSPACE:"
+        echo $GITHUB_WORKSPACE
+        echo ">>>> go path:"
+        echo $GOPATH
+        echo ">>>> pwd:"
+        pwd
+        go get -v -t -d ./...
+      working-directory: ${{ github.workspace }}/${{ env.APP }}
 
     - name: Build
-      run:
-        shell: go build -v .
-        working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go build -v .
+      working-directory: ${{ github.workspace }}/${{ env.APP }}
 
     - name: Test
-      run:
-        shell: go test -v ./...
-        working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go test -v .
+      working-directory: ${{ github.workspace }}/${{ env.APP }}
