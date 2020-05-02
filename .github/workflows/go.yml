@@ -12,7 +12,7 @@ jobs:
     name: Build
     runs-on: ubuntu-18.04
     env:
-      GOPATH: ${GITHUB_WORKSPACE}
+      GOPATH: ${{ env.GITHUB_WORKSPACE }}
     steps:
 
     - name: Test
@@ -20,6 +20,7 @@ jobs:
         echo $PATH
         echo $GITHUB_WORKSPACE
         echo ${GITHUB_WORKSPACE}
+        echo ${{ env.GITHUB_WORKSPACE }}
 
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
