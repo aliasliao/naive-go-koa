@@ -8,6 +8,13 @@ on:
 
 jobs:
 
+  test
+    name: Test
+    run: |
+      echo $PATH && \
+      echo $GITHUB_WORKSPACE
+      echo ${GITHUB_WORKSPACE}
+
   build:
     name: Build
     runs-on: ubuntu-18.04
