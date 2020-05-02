@@ -6,14 +6,20 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  GOPATH: ${{ github.workspace }}
+  APP: src/github.com/${{ github.repository }}
+
+defaults:
+  run:
+    working-directory: ${{ github.workspace }}/${{ env.APP }}
+
 jobs:
 
   build:
     name: Build
     runs-on: ubuntu-18.04
     env:
-      GOPATH: ${{ github.workspace }}
-      GITHUB_WORKSPACE: ${{ github.workspace }}/src/github.com/${{ github.repository }}
     steps:
 
     - name: Log env
@@ -33,6 +39,8 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+      with:
+        path: ${{ env.APP }}
 
     - name: Get dependencies
       run: |
