@@ -8,7 +8,7 @@ on:
 
 env:
   GOPATH: /home/runner/work/go
-  GITHUB_WORKSPACE: /home/runner/work/go/src/github.com/$GITHUB_REPOSITORY
+  GITHUB_WORKSPACE: /home/runner/work/go/src/github.com/${{ GITHUB_REPOSITORY }}
 
 jobs:
 
