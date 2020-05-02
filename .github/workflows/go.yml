@@ -11,20 +11,19 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-18.04
+    env:
+      GOPATH: ${{ github.workspace }}
+      GITHUB_WORKSPACE: ${{ github.workspace }}/src/github.com/${{ github.repository }}
     steps:
 
-    - name: Set env
+    - name: Log env
       run: |
-        echo "::set-env name=GOPATH::$GITHUB_WORKSPACE"
-        echo "echo $GITHUB_WORKSPACE:"
+        echo ">>>> GITHUB_WORKSPACE:"
         echo $GITHUB_WORKSPACE
-        echo "::set-env name=GITHUB_WORKSPACE::$GITHUB_WORKSPACE/src/github.com/$GITHUB_REPOSITORY"
-        echo "go env:"
-        go env
-        echo "pwd:"
+        echo ">>>> go path:"
+        echo $GOPATH
+        echo ">>>> pwd:"
         pwd
-        echo "echo $GITHUB_WORKSPACE:"
-        echo $GITHUB_WORKSPACE
 
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
@@ -37,12 +36,12 @@ jobs:
 
     - name: Get dependencies
       run: |
-        echo "go env:"
-        go env
-        echo "pwd:"
-        pwd
-        echo "echo $GITHUB_WORKSPACE:"
+        echo ">>>> GITHUB_WORKSPACE:"
         echo $GITHUB_WORKSPACE
+        echo ">>>> go path:"
+        echo $GOPATH
+        echo ">>>> pwd:"
+        pwd
         go get -v -t -d ./...
 
     - name: Build
