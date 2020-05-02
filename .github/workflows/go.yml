@@ -17,15 +17,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
 
-    - name: Log env
-      run: |
-        echo ">>>> GITHUB_WORKSPACE:"
-        echo $GITHUB_WORKSPACE
-        echo ">>>> go path:"
-        echo $GOPATH
-        echo ">>>> pwd:"
-        pwd
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
@@ -38,20 +29,13 @@ jobs:
         path: ${{ env.APP }}
 
     - name: Get dependencies
-      run: |
-        echo ">>>> GITHUB_WORKSPACE:"
-        echo $GITHUB_WORKSPACE
-        echo ">>>> go path:"
-        echo $GOPATH
-        echo ">>>> pwd:"
-        pwd
-        go get -v -t -d ./...
       working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go get -v -t -d ./...
 
     - name: Build
-      run: go build -v .
       working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go build -v .
 
     - name: Test
-      run: go test -v .
       working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go test -v ./...
