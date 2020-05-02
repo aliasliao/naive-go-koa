@@ -14,7 +14,9 @@ jobs:
     steps:
 
     - name: Set env
-      run: echo "::set-env name=GOPATH::$GITHUB_WORKSPACE"
+      run: |
+        echo "::set-env name=GOPATH::$GITHUB_WORKSPACE"
+        echo "::set-env name=GITHUB_WORKSPACE::$GITHUB_WORKSPACE/src/github.com/$GITHUB_REPOSITORY"
 
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
@@ -24,8 +26,6 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
-      with:
-        path: src/github.com/${{ github.repository }}
 
     - name: Get dependencies
       run: |
