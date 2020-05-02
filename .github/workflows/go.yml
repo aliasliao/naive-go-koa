@@ -29,8 +29,11 @@ jobs:
 
     - name: Get dependencies
       run: |
+        echo "go env:"
         go env
-        echo $pwd
+        echo "pwd:"
+        pwd
+        echo "echo $GITHUB_WORKSPACE:"
         echo $GITHUB_WORKSPACE
         go get -v -t -d ./...
 
