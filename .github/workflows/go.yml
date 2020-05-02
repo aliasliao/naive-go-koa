@@ -28,7 +28,11 @@ jobs:
         path: src/github.com/${{ github.repository }}
 
     - name: Get dependencies
-      run: go get -v -t -d ./...
+      run: |
+        go env
+        echo $pwd
+        echo $GITHUB_WORKSPACE
+        go get -v -t -d ./...
 
     - name: Build
       run: go build -v .
