@@ -6,15 +6,14 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  GOPATH: /home/runner/work/go
-  GITHUB_WORKSPACE: /home/runner/work/go/src/github.com/${{ GITHUB_REPOSITORY }}
-
 jobs:
 
   build:
     name: Build
     runs-on: ubuntu-18.04
+    env:
+      GOPATH: /home/runner/work/go
+      GITHUB_WORKSPACE: /home/runner/work/go/src/github.com/${{ github.repository }}
     steps:
 
     - name: Set up Go 1.x
