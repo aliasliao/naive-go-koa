@@ -12,7 +12,7 @@ jobs:
     name: Build
     runs-on: ubuntu-18.04
     env:
-      GOPATH: "${GITHUB_WORKSPACE}"
+      GOPATH: $GITHUB_WORKSPACE
     steps:
 
     - name: Test
