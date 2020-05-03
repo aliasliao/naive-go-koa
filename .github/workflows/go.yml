@@ -23,6 +23,23 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ^1.14
+      run: |
+        wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC }}/protoc-${{ env.PROTOC }}-linux-x86_64.zip
+        unzip *.zip -d ./tmp
+        cp -r ./tmp/include/* ${{ env.GOPATH }}/src
+        cp ./tmp/bin/* ${{ env.GOBIN }}
+        rm -f *.zip
+        rm -rf ./tmp
+        go get -v google.golang.org/protobuf/cmd/protoc-gen-go
+        echo -----------go env
+        go env
+        echo -----------path
+        echo $PATH
+        echo -----------ls gobin
+        ls -al ${{ env.GOBIN }}
+        echo -----------ls gopath
+        ls -al ${{ env.GOPATH }}
+
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
@@ -34,23 +51,10 @@ jobs:
       run: go get -v -d ./...
 
     - name: Generate proto
+      working-directory: ${{ github.workspace }}/${{ env.APP }}
       run: |
-        wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC }}/protoc-${{ env.PROTOC }}-linux-x86_64.zip
-        unzip *.zip -d ./tmp
-        cp -r ./tmp/include/* ${{ env.GOPATH }}/src
-        cp ./tmp/bin/* ${{ env.GOBIN }}
-        rm -f *.zip
-        rm -rf ./tmp
-        go get -v google.golang.org/protobuf/cmd/protoc-gen-go
         protoc --proto_path=.  --go_out=. ./model/*.proto
-        echo -----------go env
-        go env
-        echo -----------path
-        echo $PATH
-        echo -----------ls gobin
-        ls -al ${{ env.GOBIN }}
-        echo -----------ls gopath
-        ls -al ${{ env.GOPATH }}
+        ls -al
 
     - name: Build
       working-directory: ${{ github.workspace }}/${{ env.APP }}
