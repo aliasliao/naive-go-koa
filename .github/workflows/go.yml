@@ -33,14 +33,6 @@ jobs:
         rm -f *.zip
         rm -rf ./tmp
         go get -v google.golang.org/protobuf/cmd/protoc-gen-go
-        echo -----------go env
-        go env
-        echo -----------path
-        echo $PATH
-        echo -----------ls gobin
-        ls -al ${{ env.GOBIN }}
-        echo -----------ls gopath
-        ls -al ${{ env.GOPATH }}
 
 
     - name: Check out code into the Go module directory
@@ -54,9 +46,7 @@ jobs:
 
     - name: Generate proto
       working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: |
-        protoc --proto_path=.  --go_out=. ./model/*.proto
-        ls -al
+      run: protoc --proto_path=.  --go_out=. ./model/*.proto
 
     - name: Build
       working-directory: ${{ github.workspace }}/${{ env.APP }}
