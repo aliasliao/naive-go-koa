@@ -40,7 +40,7 @@ jobs:
         cp -r ./tmp/include/* ${{ env.GOPATH }}/src
         cp ./tmp/bin/* ${{ env.GOBIN }}
         rm -f *.zip
-        go get -v google.golang.org/golang/protobuf
+        go get -v google.golang.org/golang/protobuf/cmd
         go install -v google.golang.org/protobuf/cmd/protoc-gen-go
         protoc --proto_path=.  --go_out=. ./model/*.proto
         echo -----------go env
