@@ -11,7 +11,7 @@ $ cd naive-go-koa
 $ $env:GOPATH = $(pwd)
 $ go install github.com/golang/protobuf
 $ go get -u github.com/golang/protobuf/protoc-gen-go
-$ protoc --proto_path=src  --go_out=src src/model/*.proto
+$ protoc --proto_path=.  --go_out=. ./model/*.proto
 ```
 
 ### Getting Started

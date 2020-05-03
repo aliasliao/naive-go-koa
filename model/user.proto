@@ -16,4 +16,5 @@ message User {
     int32 age = 3;
     repeated string hobbies = 4;
     Gender gender = 5;
+    string color = 6;
 }

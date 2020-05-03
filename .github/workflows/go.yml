@@ -8,7 +8,9 @@ on:
 
 env:
   GOPATH: ${{ github.workspace }}
+  GOBIN: ${{ github.workspace }}/bin
   APP: src/github.com/${{ github.repository }}
+  PROTOC: 3.11.4
 
 jobs:
 
@@ -21,7 +23,21 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ^1.14
-      id: go
+
+    - name: Generate proto
+      run: |
+        wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC }}/protoc-${{ env.PROTOC }}-linux-x86_64.zip
+        unzip -o *.zip -d ${{ env.GOBIN  }} bin/protoc
+        unzip -o *.zip -d ${{ env.GOPATH }}/src
+        rm -f *.zip
+        go install google.golang.org/protobuf/cmd/protoc-gen-go
+        protoc --proto_path=.  --go_out=. ./model/*.proto
+        echo -----------go env
+        go env
+        echo -----------path
+        echo $PATH
+        echo -----------ls gobin
+        ls -al ${{ env.GOBIN }}
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
