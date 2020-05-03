@@ -23,6 +23,8 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ^1.14
+
+    - name: Install protoc
       run: |
         wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC }}/protoc-${{ env.PROTOC }}-linux-x86_64.zip
         unzip *.zip -d ./tmp
