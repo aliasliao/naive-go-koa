@@ -31,7 +31,7 @@ jobs:
 
     - name: Get dependencies
       working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: go get -v -t -d ./...
+      run: go get -v -d ./...
 
     - name: Generate proto
       run: |
@@ -40,6 +40,7 @@ jobs:
         cp -r ./tmp/include/* ${{ env.GOPATH }}/src
         cp ./tmp/bin/* ${{ env.GOBIN }}
         rm -f *.zip
+        go get github.com/golang/protobuf
         go install google.golang.org/protobuf/cmd/protoc-gen-go
         protoc --proto_path=.  --go_out=. ./model/*.proto
         echo -----------go env
