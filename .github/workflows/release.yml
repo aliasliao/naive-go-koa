@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  release:
+    type: created
+
+env:
+  GOPATH: ${{ github.workspace }}
+  GOBIN: ${{ github.workspace }}/bin
+  APP: src/github.com/${{ github.repository }}
+  PROTOC: 3.11.4
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.14
+
+      - name: Install protoc
+        run: |
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC }}/protoc-${{ env.PROTOC }}-linux-x86_64.zip
+          unzip *.zip -d ./tmp
+          cp -r ./tmp/include/* ${{ env.GOPATH }}/src
+          cp ./tmp/bin/* ${{ env.GOBIN }}
+          rm -f *.zip
+          rm -rf ./tmp
+          go get -v google.golang.org/protobuf/cmd/protoc-gen-go
+
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.APP }}
+
+      - name: Get dependencies
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
+        run: go get -v -d ./...
+
+      - name: Generate proto
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
+        run: protoc --proto_path=.  --go_out=. ./model/*.proto
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/${{ env.APP }}
+        run: |
+          go build -v .
+          ls -ahl
+
+      - name: Upload Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./${{ env.APP }}
+          asset_name: naive-go-koa
+          asset_content_type: application/octet-stream
