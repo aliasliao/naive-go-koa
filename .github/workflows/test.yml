@@ -1,4 +1,4 @@
-name: Go
+name: Test
 
 on:
   push:
@@ -13,12 +13,10 @@ env:
   PROTOC: 3.11.4
 
 jobs:
-
   build:
-    name: Build
+    name: Test and Build
     runs-on: ubuntu-18.04
     steps:
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
@@ -48,10 +46,10 @@ jobs:
       working-directory: ${{ github.workspace }}/${{ env.APP }}
       run: protoc --proto_path=.  --go_out=. ./model/*.proto
 
-    - name: Build
-      working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: go build -v .
-
     - name: Test
       working-directory: ${{ github.workspace }}/${{ env.APP }}
       run: go test -v ./...
+
+    - name: Build
+      working-directory: ${{ github.workspace }}/${{ env.APP }}
+      run: go build -v .
