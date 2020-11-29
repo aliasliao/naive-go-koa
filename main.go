@@ -3,14 +3,15 @@ package main
 import (
 	"log"
 
+	"github.com/aliasliao/naive-go-koa/addons/route"
 	"github.com/aliasliao/naive-go-koa/core"
 	"github.com/aliasliao/naive-go-koa/model"
 )
 
 func main() {
-	router := core.NewRouter()
+	router := route.NewRouter()
 	router.Get("/user/:userId", func(ctx *core.Ctx) {
-		userId, _ := ctx.GetParam("userId")
+		userId := route.GetParam(ctx, "userId")
 		ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
 		ctx.Sendm(&model.User{
 			Name:    userId,
@@ -19,18 +20,17 @@ func main() {
 			Gender:  model.User_FEMALE,
 		})
 	}).Post("/user/:userId", func(ctx *core.Ctx) {
-		userId, _ := ctx.GetParam("userId")
-		user := &model.User{
-			Name: userId,
-		}
+		userId := route.GetParam(ctx, "userId")
+		user := &model.User{}
 		ctx.Parsem(user)
+		user.Name = userId
 		ctx.Sendm(user)
 	})
+
 	app := core.New()
 	app.Use(router)
-	err := app.Listen(80, func(port *string) {
-		log.Println("Server is listening on port", *port)
-	})
+	log.Println("app is listening on 3000...")
+	err := app.Listen(3000)
 	if err != nil {
 		log.Fatal(err)
 	}

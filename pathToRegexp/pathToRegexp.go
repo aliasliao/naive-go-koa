@@ -14,11 +14,11 @@ type Options struct {
 	// When true the regexp will match from the beginning of the string. (default: true)
 	start bool
 	// The default delimiter for segments. (default: '/')
-	//delimiter string
+	// delimiter string
 	// Optional character, or list of characters, to treat as "end" characters.
-	//endsWidth uint8
+	// endsWidth uint8
 	// List of characters to consider delimiters when parsing. (default: undefined, any character)
-	//whitelist []uint8
+	// whitelist []uint8
 }
 
 func replaceAll(str string, re *regexp.Regexp, newSubStr string) string {
