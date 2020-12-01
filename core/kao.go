@@ -17,6 +17,12 @@ type Middleware interface {
 	Apply(handler Handler) Handler
 }
 
+type MiddlewareFunc func(Handler) Handler
+
+func (f MiddlewareFunc) Apply(handler Handler) Handler {
+	return f(handler)
+}
+
 func New() *Kao {
 	return &Kao{
 		server: &http.Server{

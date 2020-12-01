@@ -1,4 +1,4 @@
-package route
+package router
 
 import (
 	"context"
@@ -80,7 +80,6 @@ func (r Router) Apply(handler core.Handler) core.Handler {
 	return func(ctx *core.Ctx) {
 		method, path := ctx.Request.Method, ctx.Request.URL.Path
 		log.Printf("%s %s\n", method, path)
-		routeHit := false
 		for _, route := range r.routes {
 			if route.method == Method(method) && route.re.MatchString(path) {
 				keys := route.re.SubexpNames()
@@ -91,16 +90,10 @@ func (r Router) Apply(handler core.Handler) core.Handler {
 				}
 				ctx.Ctx = context.WithValue(ctx.Ctx, paramsKey, &param)
 				route.handler(ctx)
-				routeHit = true
 				break
 			}
 		}
-		if !routeHit {
-			// 404 Not Found
-			ctx.Send("Using Default Response Handler~")
-		}
 		if handler != nil {
-			// inner handler
 			handler(ctx)
 		}
 	}
