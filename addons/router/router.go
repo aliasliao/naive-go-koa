@@ -5,8 +5,8 @@ import (
 	"log"
 	"regexp"
 
+	"github.com/aliasliao/naive-go-koa/addons/router/pathToRegexp"
 	"github.com/aliasliao/naive-go-koa/core"
-	"github.com/aliasliao/naive-go-koa/pathToRegexp"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 )
@@ -37,6 +37,27 @@ type routeT struct {
 	method  Method
 	handler core.Handler
 }
+
+// Router is a controller middleware
+//
+// Example:
+//  r := router.NewRouter()
+//  r.Get("/user/:userId", func(ctx *core.Ctx) {
+//  	userId := router.GetParam(ctx, "userId")
+//  	ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
+//  	router.Sendm(ctx, &model.User{
+//  		Name:    userId,
+//  		Age:     999,
+//  		Hobbies: []string{"adsfa", "dddd"},
+//  		Gender:  model.User_FEMALE,
+//  	})
+//  }).Post("/user/:userId", func(ctx *core.Ctx) {
+//  	userId := router.GetParam(ctx, "userId")
+//  	user := &model.User{}
+//  	router.Parsem(ctx, user)
+//  	user.Name = userId
+//  	router.Sendm(ctx, user)
+//  })
 type Router struct {
 	routes []*routeT
 }
@@ -92,7 +113,7 @@ func Parsem(ctx *core.Ctx, pb proto.Message) error {
 }
 
 // implement core.Handler
-func (r Router) Apply(handler core.Handler) core.Handler {
+func (r *Router) Apply(handler core.Handler) core.Handler {
 	return func(ctx *core.Ctx) {
 		method, path := ctx.Request.Method, ctx.Request.URL.Path
 		log.Printf("%s %s\n", method, path)
