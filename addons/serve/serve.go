@@ -3,6 +3,7 @@ package serve
 import (
 	"errors"
 	"io/ioutil"
+	mime2 "mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -29,7 +30,11 @@ func New(dir string) (core.Middleware, error) {
 				if data, err := ioutil.ReadFile(file); err != nil {
 					ctx.Error(err.Error(), http.StatusBadRequest)
 				} else {
-					ctx.Write(data)
+					mime := mime2.TypeByExtension(filepath.Ext(file))
+					if mime == "" {
+						mime = "application/octet-stream"
+					}
+					ctx.Write(data, mime)
 				}
 			}
 			if handler != nil {

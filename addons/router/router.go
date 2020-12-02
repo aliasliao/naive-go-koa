@@ -7,6 +7,8 @@ import (
 
 	"github.com/aliasliao/naive-go-koa/core"
 	"github.com/aliasliao/naive-go-koa/pathToRegexp"
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 )
 
 type Method string
@@ -23,6 +25,11 @@ type key string
 
 const (
 	paramsKey key = "params-key"
+)
+
+var (
+	marshaler   = &jsonpb.Marshaler{EmitDefaults: true}
+	unmarshaler = &jsonpb.Unmarshaler{}
 )
 
 type routeT struct {
@@ -73,6 +80,15 @@ func GetParam(ctx *core.Ctx, key string) string {
 		}
 	}
 	return ""
+}
+
+func Sendm(ctx *core.Ctx, pb proto.Message) error {
+	ctx.SetHeader("Content-Type", "application/json;charset=UTF-8")
+	return marshaler.Marshal(ctx.Writer, pb)
+}
+
+func Parsem(ctx *core.Ctx, pb proto.Message) error {
+	return unmarshaler.Unmarshal(ctx.Request.Body, pb)
 }
 
 // implement core.Handler

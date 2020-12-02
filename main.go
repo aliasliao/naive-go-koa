@@ -22,7 +22,7 @@ func main() {
 	r.Get("/user/:userId", func(ctx *core.Ctx) {
 		userId := router.GetParam(ctx, "userId")
 		ctx.SetCookie("sessionId", "80asd-dsd8-daf988das-88a0")
-		ctx.Sendm(&model.User{
+		router.Sendm(ctx, &model.User{
 			Name:    userId,
 			Age:     999,
 			Hobbies: []string{"adsfa", "dddd"},
@@ -31,9 +31,9 @@ func main() {
 	}).Post("/user/:userId", func(ctx *core.Ctx) {
 		userId := router.GetParam(ctx, "userId")
 		user := &model.User{}
-		ctx.Parsem(user)
+		router.Parsem(ctx, user)
 		user.Name = userId
-		ctx.Sendm(user)
+		router.Sendm(ctx, user)
 	})
 
 	app := core.New()
