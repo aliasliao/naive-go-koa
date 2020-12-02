@@ -7,9 +7,10 @@ import (
 )
 
 type Ctx struct {
-	Writer  http.ResponseWriter
-	Request *http.Request
-	Ctx     context.Context
+	Writer     http.ResponseWriter
+	Request    *http.Request
+	StatusCode int
+	Ctx        context.Context
 }
 
 func (ctx *Ctx) SetHeader(key string, val string) {
@@ -30,6 +31,7 @@ func (ctx *Ctx) SetCookie(name string, value string) {
 
 func (ctx *Ctx) Error(detail string, statusCode int) {
 	http.Error(ctx.Writer, detail, statusCode)
+	ctx.StatusCode = statusCode
 }
 
 func (ctx *Ctx) Message(message string, contentType string) {
@@ -39,7 +41,9 @@ func (ctx *Ctx) Message(message string, contentType string) {
 	ctx.SetHeader("Content-Type", contentType)
 	if _, err := fmt.Fprintln(ctx.Writer, message); err != nil {
 		ctx.Error(err.Error(), http.StatusInternalServerError)
+		ctx.StatusCode = http.StatusInternalServerError
 	}
+	ctx.StatusCode = http.StatusOK
 }
 
 func (ctx *Ctx) Write(message []byte, contentType string) {
@@ -49,5 +53,7 @@ func (ctx *Ctx) Write(message []byte, contentType string) {
 	ctx.SetHeader("Content-Type", contentType)
 	if _, err := ctx.Writer.Write(message); err != nil {
 		ctx.Error(err.Error(), http.StatusInternalServerError)
+		ctx.StatusCode = http.StatusInternalServerError
 	}
+	ctx.StatusCode = http.StatusOK
 }

@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"log"
 	"regexp"
 
 	"github.com/aliasliao/naive-go-koa/addons/router/pathToRegexp"
@@ -58,6 +57,8 @@ type routeT struct {
 //  	user.Name = userId
 //  	router.Sendm(ctx, user)
 //  })
+//
+// curl -v -H "Content-Type: application/json;charset=UTF-8" -d '{\"name\":\"123\",\"age\":999,\"hobbies\":[\"adsfa\",\"dddd\"],\"gender\":\"FEMALE\"}' localhost/user/123
 type Router struct {
 	routes []*routeT
 }
@@ -116,7 +117,6 @@ func Parsem(ctx *core.Ctx, pb proto.Message) error {
 func (r *Router) Apply(handler core.Handler) core.Handler {
 	return func(ctx *core.Ctx) {
 		method, path := ctx.Request.Method, ctx.Request.URL.Path
-		log.Printf("%s %s\n", method, path)
 		for _, route := range r.routes {
 			if route.method == Method(method) && route.re.MatchString(path) {
 				keys := route.re.SubexpNames()

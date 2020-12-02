@@ -3,6 +3,7 @@ package serve
 import (
 	"errors"
 	"io/ioutil"
+	"log"
 	mime2 "mime"
 	"net/http"
 	"os"
@@ -20,6 +21,8 @@ func New(dir string) (core.Middleware, error) {
 		return nil, errors.New(dir + " is not a valid directory")
 	}
 	return core.MiddlewareFunc(func(handler core.Handler) core.Handler {
+		absDir, _ := filepath.Abs(dir)
+		log.Println("[serve]", "serving directory:", absDir)
 		return func(ctx *core.Ctx) {
 			method, path := ctx.Request.Method, ctx.Request.URL.Path
 			if method == http.MethodGet {
