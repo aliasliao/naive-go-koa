@@ -48,4 +48,4 @@ jobs:
 
     - name: Build
       working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: go build -v -i -o httpd github.com/${{ github.reposirory }}
+      run: go build -i -o httpd github.com/${{ github.repository }}
