@@ -15,11 +15,8 @@ env:
 jobs:
   build:
     name: Test and Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
-    - name: Show ubuntu version
-      run: lsb_release -a
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
@@ -41,10 +38,6 @@ jobs:
       with:
         path: ${{ env.APP }}
 
-    - name: Get dependencies
-      working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: go get -v -d ./...
-
     - name: Generate proto
       working-directory: ${{ github.workspace }}/${{ env.APP }}
       run: protoc --proto_path=.  --go_out=. ./model/*.proto
@@ -55,4 +48,4 @@ jobs:
 
     - name: Build
       working-directory: ${{ github.workspace }}/${{ env.APP }}
-      run: go build -v .
+      run: go build -v -i -o httpd github.com/${{ github.reposirory }}

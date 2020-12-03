@@ -36,10 +36,6 @@ jobs:
         with:
           path: ${{ env.APP }}
 
-      - name: Get dependencies
-        working-directory: ${{ github.workspace }}/${{ env.APP }}
-        run: go get -v -d ./...
-
       - name: Generate proto
         working-directory: ${{ github.workspace }}/${{ env.APP }}
         run: protoc --proto_path=.  --go_out=. ./model/*.proto
@@ -47,8 +43,13 @@ jobs:
       - name: Build
         working-directory: ${{ github.workspace }}/${{ env.APP }}
         run: |
-          go build -v .
-          ls -ahl
+          go build -v -i -o httpd_linux_x86 github.com/${{ github.reposirory }}
+          GOOS=linux GOARCH=arm GOARM=5 go build -v -i -o httpd_linux_arm5 github.com/${{ github.reposirory }}
+          GOOS=linux GOARCH=arm GOARM=7 go build -v -i -o httpd_linux_arm7 github.com/${{ github.reposirory }}
+          GOOS=windows GOARCH=amd64 go build -v -i -o httpd_win_amd64.exe github.com/${{ github.reposirory }}
+          ls -alh
+          tar -cvf build_all.tar httpd*
+          ls -alh
 
       - name: Upload Binary
         uses: actions/upload-release-asset@v1
@@ -56,6 +57,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./${{ env.APP }}/naive-go-koa
-          asset_name: naive-go-koa
+          asset_path: ./${{ env.APP }}/build_all.tar
+          asset_name: httpd.tar
           asset_content_type: application/octet-stream
