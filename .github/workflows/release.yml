@@ -8,7 +8,7 @@ env:
   GOPATH: ${{ github.workspace }}
   GOBIN: ${{ github.workspace }}/bin
   APP: src/github.com/${{ github.repository }}
-  PROTOC: 3.11.4
+  PROTOC: 3.13.0
 
 jobs:
   build:

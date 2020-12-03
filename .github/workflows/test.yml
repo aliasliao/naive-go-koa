@@ -10,13 +10,16 @@ env:
   GOPATH: ${{ github.workspace }}
   GOBIN: ${{ github.workspace }}/bin
   APP: src/github.com/${{ github.repository }}
-  PROTOC: 3.11.4
+  PROTOC: 3.13.0
 
 jobs:
   build:
     name: Test and Build
     runs-on: ubuntu-18.04
     steps:
+    - name: Show ubuntu version
+      run: lsb_release -a
+
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
