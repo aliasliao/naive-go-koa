@@ -43,10 +43,10 @@ jobs:
       - name: Build
         working-directory: ${{ github.workspace }}/${{ env.APP }}
         run: |
-          go build -v -i -o httpd_linux_x86 github.com/${{ github.reposirory }}
-          GOOS=linux GOARCH=arm GOARM=5 go build -v -i -o httpd_linux_arm5 github.com/${{ github.reposirory }}
-          GOOS=linux GOARCH=arm GOARM=7 go build -v -i -o httpd_linux_arm7 github.com/${{ github.reposirory }}
-          GOOS=windows GOARCH=amd64 go build -v -i -o httpd_win_amd64.exe github.com/${{ github.reposirory }}
+          go build -v -i -o httpd_linux_x86 github.com/${{ github.repository }}
+          GOOS=linux GOARCH=arm GOARM=5 go build -v -i -o httpd_linux_arm5 github.com/${{ github.repository }}
+          GOOS=linux GOARCH=arm GOARM=7 go build -v -i -o httpd_linux_arm7 github.com/${{ github.repository }}
+          GOOS=windows GOARCH=amd64 go build -v -i -o httpd_win_amd64.exe github.com/${{ github.repository }}
           ls -alh
           tar -cvf build_all.tar httpd*
           ls -alh
