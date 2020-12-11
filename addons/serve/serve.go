@@ -26,6 +26,9 @@ func New(dir string) (core.Middleware, error) {
 		return func(ctx *core.Ctx) {
 			method, path := ctx.Request.Method, ctx.Request.URL.Path
 			if method == http.MethodGet {
+				if path == "/" {
+					path = "index.html"
+				}
 				file := filepath.Join(dir, path)
 				if _, err := os.Stat(file); err != nil {
 					ctx.Error(err.Error(), http.StatusNotFound)
